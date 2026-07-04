@@ -1,10 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { mascotSay } from '@/lib/effects';
 
 export interface ZoomLevel { emoji: string; title: string; desc: string }
+
+// Fixed target sizes per step (px) — smallest→largest, matching the "zoom
+// out" story so the accumulated row visually reads as a scale comparison.
+const SIZES = [30, 40, 52, 68, 88, 112, 140];
 
 export default function ZoomSlider({
   levels,
@@ -18,35 +22,58 @@ export default function ZoomSlider({
   onEndMessage?: string;
 }) {
   const [idx, setIdx] = useState(0);
-  const level = levels[idx];
+  const current = levels[idx];
 
   return (
     <div className="glass mt-8" style={{ padding: '1.8rem 1.4rem', borderRadius: 22 }}>
       <div
         style={{
-          height: 'min(46vh, 340px)',
-          display: 'grid',
-          placeItems: 'center',
-          position: 'relative',
-          overflow: 'hidden',
+          minHeight: 'min(40vh, 260px)',
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'center',
+          gap: '0.9rem',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          padding: '1rem 0.5rem',
           borderRadius: 18,
-          background: 'radial-gradient(circle at 50% 50%, rgba(123,92,255,.15), transparent 70%)',
+          background: 'radial-gradient(circle at 50% 80%, rgba(123,92,255,.12), transparent 70%)',
         }}
       >
-        <motion.div
-          key={idx}
-          initial={{ opacity: 0, scale: 0.4 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.35 }}
-          style={{ fontSize: 'clamp(4rem,16vw,9rem)' }}
-        >
-          {level.emoji}
-        </motion.div>
+        <AnimatePresence initial={false}>
+          {levels.slice(0, idx + 1).map((lvl, j) => {
+            const isCurrent = j === idx;
+            return (
+              <motion.div
+                key={lvl.title}
+                layout
+                initial={{ opacity: 0, scale: 0.3 }}
+                animate={{ opacity: isCurrent ? 1 : 0.45, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.3 }}
+                transition={{ duration: 0.5, ease: [0.16, 0.86, 0.24, 1] }}
+                style={{
+                  fontSize: SIZES[j] ?? SIZES[SIZES.length - 1],
+                  lineHeight: 1,
+                  flex: '0 0 auto',
+                  filter: isCurrent ? 'none' : 'saturate(0.7)',
+                }}
+              >
+                {lvl.emoji}
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
       </div>
+
       <div className="text-center mt-5">
-        <p className="font-display text-2xl">{level.title}</p>
-        <p className="mt-1 mx-auto" style={{ maxWidth: 520, color: 'var(--muted)' }}>{level.desc}</p>
+        <motion.p key={`t-${idx}`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="font-display text-2xl">
+          {current.title}
+        </motion.p>
+        <motion.p key={`d-${idx}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="mt-1 mx-auto" style={{ maxWidth: 520, color: 'var(--muted)' }}>
+          {current.desc}
+        </motion.p>
       </div>
+
       <label className="sr-only" htmlFor={`zoom-${minLabel}`}>Zoom level, from {minLabel} to {maxLabel}</label>
       <input
         id={`zoom-${minLabel}`}
