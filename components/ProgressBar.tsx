@@ -29,6 +29,12 @@ export default function ProgressBar() {
         const boost = Math.max(0, Math.min(1, window.pageYOffset / window.innerHeight));
         document.documentElement.style.setProperty('--nebula-boost', boost.toFixed(3));
 
+        // Visual "realism" ramp: 0 = playful illustration (hero/early
+        // missions), 1 = cinematic (universe-scale climax onward). Ramps
+        // across the same early-to-deep arc as the emotional/audio journey.
+        const realism = Math.max(0, Math.min(1, (p - 0.05) / (0.68 - 0.05)));
+        document.documentElement.style.setProperty('--realism', realism.toFixed(3));
+
         const mid = window.pageYOffset + window.innerHeight * 0.42;
         let current = 0;
         sections.forEach((sec, i) => { if (sec.offsetTop <= mid) current = i + 1; });

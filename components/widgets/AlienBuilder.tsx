@@ -24,11 +24,22 @@ export default function AlienBuilder() {
       <div className="flex flex-col md:flex-row gap-6 items-center mt-6">
         <motion.div
           className="glass-strong"
-          style={{ width: 170, height: 170, borderRadius: '50%', display: 'grid', placeItems: 'center', fontSize: '5rem', flex: '0 0 auto' }}
+          style={{ width: 170, height: 170, borderRadius: '50%', position: 'relative', overflow: 'hidden', display: 'grid', placeItems: 'center', flex: '0 0 auto' }}
           animate={{ scale: bump ? 1.15 : 1 }}
           transition={{ duration: 0.25 }}
         >
-          {body || '👽'}{planet}
+          <span style={{ fontSize: '4.6rem', lineHeight: 1 }}>{body || '👽'}</span>
+          {planet && (
+            <span
+              style={{
+                position: 'absolute', bottom: 10, right: 10, fontSize: '1.5rem', width: 40, height: 40,
+                borderRadius: '50%', background: 'rgba(5,6,15,.75)', border: '1px solid var(--glass-border)',
+                display: 'grid', placeItems: 'center',
+              }}
+            >
+              {planet}
+            </span>
+          )}
         </motion.div>
         <div className="flex-1 w-full space-y-3">
           <div>

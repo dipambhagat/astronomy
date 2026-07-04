@@ -28,6 +28,8 @@
 
   /* driven by GSAP ScrollTrigger — see components/Starfield.tsx / NebulaDepthCue */
   --nebula-boost: 0;
+  /* driven by ProgressBar.tsx — 0 = playful illustration, 1 = cinematic */
+  --realism: 0;
 }
 
 html {
@@ -122,6 +124,28 @@ body {
 @keyframes twinkle {
   0%, 100% { opacity: 0.15; transform: scale(0.6); }
   50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ---------- Realism overlay ----------
+   A cinematic vignette + fine grain that intensifies as --realism rises
+   (see ProgressBar.tsx). This is a visual-treatment stand-in for the
+   illustration→photography progression described in the creative brief;
+   swap in real NASA/JWST imagery later and this still reads as "grading"
+   on top of it. */
+.realism-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background: radial-gradient(120% 120% at 50% 45%, transparent 50%, rgba(0, 0, 0, calc(var(--realism, 0) * 0.5)) 100%);
+}
+.realism-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: calc(var(--realism, 0) * 0.05);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 /* ---------- Sections ---------- */

@@ -9,7 +9,9 @@ import ProgressBar from '@/components/ProgressBar';
 import MissionProgressEffects from '@/components/MissionProgressEffects';
 import NavPanel from '@/components/NavPanel';
 import Mascot from '@/components/Mascot';
-import AudioToggle from '@/components/AudioToggle';
+import SoundConsentPill from '@/components/SoundConsentPill';
+import AudioDirector from '@/components/AudioDirector';
+import RealismOverlay from '@/components/RealismOverlay';
 import Finale from '@/components/Finale';
 
 import Mission1 from '@/components/missions/Mission1';
@@ -32,16 +34,18 @@ export default function SiteExperience() {
     <>
       <div className="sky-fixed" />
       <div className="nebula-layer" />
+      <RealismOverlay />
       <Starfield />
       <ShootingStars />
       <Twinkle />
       <ConfettiCanvas />
 
       <ProgressBar />
+      <AudioDirector />
       <MissionProgressEffects />
       <NavPanel />
       <Mascot />
-      <AudioToggle />
+      <SoundConsentPill />
 
       <Hero />
       <Mission1 />
