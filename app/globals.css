@@ -1,0 +1,480 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --space-black: #05060f;
+  --space-black-2: #080a1a;
+  --midnight: #0b1030;
+  --galaxy-purple: #7b5cff;
+  --electric-blue: #38bdf8;
+  --deep-blue: #2b4bff;
+  --nebula-pink: #ff5db1;
+  --warm-yellow: #ffd166;
+  --soft-white: #eef1ff;
+  --muted: #a7add6;
+
+  --grad-cosmic: linear-gradient(120deg, #7b5cff 0%, #38bdf8 50%, #ff5db1 100%);
+  --grad-nebula: radial-gradient(1200px 700px at 20% -10%, rgba(123, 92, 255, 0.35), transparent 60%),
+    radial-gradient(1000px 600px at 90% 10%, rgba(56, 189, 248, 0.22), transparent 60%),
+    radial-gradient(900px 700px at 50% 120%, rgba(255, 93, 177, 0.2), transparent 60%);
+
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+
+  --font-display: 'Aboreto', 'Space Grotesk', serif;
+  --font-body: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+
+  /* driven by GSAP ScrollTrigger — see components/Starfield.tsx / NebulaDepthCue */
+  --nebula-boost: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--space-black);
+  color: var(--soft-white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Typography helpers ---------- */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.5px;
+}
+.text-gradient {
+  background: var(--grad-cosmic);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.glow-text {
+  text-shadow: 0 0 24px rgba(123, 92, 255, 0.55), 0 0 60px rgba(56, 189, 248, 0.3);
+}
+
+/* ---------- Glassmorphism ---------- */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: var(--glass-shadow);
+}
+.glass-strong {
+  background: rgba(12, 14, 34, 0.72);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+}
+.card-lift {
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s, border-color 0.45s;
+}
+.card-lift:hover {
+  transform: translateY(-8px);
+  border-color: rgba(123, 92, 255, 0.55);
+  box-shadow: 0 30px 70px rgba(123, 92, 255, 0.25);
+}
+
+/* ---------- Background layers ---------- */
+.sky-fixed {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  background: var(--space-black);
+}
+.nebula-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: var(--grad-nebula);
+  opacity: calc(0.9 + (var(--nebula-boost) * 0.1));
+}
+#starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.twinkle {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.twinkle i {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.8;
+  animation: twinkle 3.5s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ---------- Sections ---------- */
+.mission {
+  position: relative;
+  padding: 12vh 1.25rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.mission-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--electric-blue);
+  font-weight: 600;
+}
+
+/* ---------- Progress rocket bar ---------- */
+.progress-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  padding: 0.55rem 1rem;
+}
+.progress-track {
+  position: relative;
+  height: 4px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.14));
+  overflow: visible;
+}
+.progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  width: 0%;
+  border-radius: 99px;
+  background: var(--grad-cosmic);
+  box-shadow: 0 0 18px rgba(123, 92, 255, 0.7);
+}
+.progress-rocket {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  font-size: 1.15rem;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8));
+  will-change: left;
+}
+.progress-label {
+  position: fixed;
+  top: 1.2rem;
+  left: 1.1rem;
+  z-index: 60;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Floating nav ---------- */
+.nav-fab {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 70;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.35rem;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.nav-fab:hover {
+  transform: scale(1.08) rotate(-8deg);
+  box-shadow: 0 0 30px rgba(123, 92, 255, 0.6);
+}
+.nav-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  width: min(420px, 88vw);
+  padding: 5rem 1.5rem 2rem;
+  overflow-y: auto;
+}
+.nav-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
+  background: rgba(3, 4, 12, 0.55);
+  backdrop-filter: blur(4px);
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--soft-white);
+  border: 1px solid transparent;
+  transition: all 0.3s;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+.nav-item:hover {
+  background: rgba(123, 92, 255, 0.14);
+  border-color: rgba(123, 92, 255, 0.4);
+  transform: translateX(4px);
+}
+.nav-item .n-emoji { font-size: 1.3rem; }
+.nav-item .n-idx { font-size: 0.68rem; color: var(--electric-blue); letter-spacing: 0.15em; }
+.nav-item.active { background: rgba(123, 92, 255, 0.2); border-color: rgba(123, 92, 255, 0.6); }
+
+/* ---------- Mascot ---------- */
+.mascot {
+  position: fixed;
+  bottom: 1.1rem;
+  left: 1.1rem;
+  z-index: 65;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  max-width: 340px;
+}
+.mascot-avatar {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 1.9rem;
+  animation: bob 4s ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+.mascot-bubble {
+  padding: 0.7rem 0.9rem;
+  border-radius: 16px 16px 16px 4px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 240px;
+}
+
+/* ---------- Buttons / pills ---------- */
+.pill-note { border-radius: 22px; padding: 0.85rem 1.3rem; font-size: 0.92rem; }
+@media (max-width: 640px) {
+  .pill-note { border-radius: 20px; }
+}
+.btn-cosmic {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--grad-cosmic);
+  color: #fff;
+  border: none;
+  box-shadow: 0 10px 30px rgba(123, 92, 255, 0.4);
+  transition: box-shadow 0.3s;
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--soft-white);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.3s;
+}
+.btn-ghost:hover {
+  border-color: rgba(56, 189, 248, 0.6);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+/* ---------- Transition cards ---------- */
+.continue-card {
+  border-radius: 28px;
+  padding: 2.2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.continue-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 28px;
+  padding: 2px;
+  background: var(--grad-cosmic);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+}
+.prev-link {
+  position: absolute;
+  bottom: 1.4rem;
+  left: 1.4rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 0.3s;
+}
+.prev-link:hover { color: var(--electric-blue); }
+
+/* ---------- Earth / planets ---------- */
+.planet { border-radius: 50%; position: relative; }
+.earth {
+  width: clamp(200px, 34vw, 360px);
+  aspect-ratio: 1;
+  background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.5), transparent 30%),
+    radial-gradient(circle at 70% 70%, #1e7a4d, transparent 42%),
+    radial-gradient(circle at 30% 65%, #2a9d6a, transparent 38%),
+    radial-gradient(circle at 60% 30%, #2e8b57, transparent 30%),
+    linear-gradient(160deg, #1b6ca8, #0a3d62);
+  box-shadow: inset -30px -20px 60px rgba(0, 0, 0, 0.6), 0 0 70px rgba(56, 189, 248, 0.4);
+  animation: spin 26s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.earth-wrap { position: relative; display: inline-grid; place-items: center; }
+.grav-arrows { position: absolute; inset: 0; pointer-events: none; }
+.grav-arrow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 12px solid rgba(56, 189, 248, 0.95);
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.7));
+  opacity: 0;
+  animation: gpop 2.6s ease-in-out infinite;
+}
+@keyframes gpop {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.95; }
+}
+
+/* ---------- Star comparison ---------- */
+.star-orb { border-radius: 50%; transition: transform 0.5s; cursor: pointer; }
+.star-orb:hover { transform: scale(1.08); }
+
+/* ---------- Gravity grid (black hole) ---------- */
+.grid-warp { filter: drop-shadow(0 0 40px rgba(123, 92, 255, 0.4)); }
+
+/* ---------- Shooting star ---------- */
+.shooting-star {
+  position: fixed;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  z-index: 5;
+  box-shadow: 0 0 8px 2px #fff;
+  pointer-events: none;
+}
+.shooting-star::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 120px;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), transparent);
+  transform: translateY(-50%);
+}
+
+/* ---------- Confetti canvas ---------- */
+#confetti { position: fixed; inset: 0; z-index: 200; pointer-events: none; }
+
+/* ---------- Quiz ---------- */
+.quiz-opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.85rem 1.1rem;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: all 0.25s;
+  margin-bottom: 0.6rem;
+  color: var(--soft-white);
+}
+.quiz-opt:hover { border-color: rgba(56, 189, 248, 0.5); background: rgba(56, 189, 248, 0.08); }
+.quiz-opt.correct { border-color: #38f89a; background: rgba(56, 248, 154, 0.14); }
+.quiz-opt.wrong { border-color: #ff6b6b; background: rgba(255, 107, 107, 0.12); }
+
+/* ---------- Reveal-on-click ---------- */
+.reveal-box { cursor: pointer; user-select: none; }
+.reveal-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.6s ease, opacity 0.5s;
+  opacity: 0;
+}
+.reveal-answer.show { max-height: 400px; opacity: 1; }
+
+/* float */
+.float-slow { animation: floaty 7s ease-in-out infinite; }
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+}
+
+/* space mode audio btn */
+.audio-toggle { position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 65; }
+
+/* reduced motion safety net — belt-and-suspenders alongside the
+   useReducedMotion() checks in components */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.2s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* mobile tweaks */
+@media (max-width: 640px) {
+  .mascot { max-width: 260px; bottom: 0.8rem; }
+  .mascot-bubble { max-width: 180px; font-size: 0.76rem; }
+  .mission { padding: 9vh 1rem; }
+  .progress-label { display: none; }
+}
