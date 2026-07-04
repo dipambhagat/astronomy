@@ -42,17 +42,26 @@ export function setSoundConsent(enabled: boolean) {
 /**
  * Attempts playback. Must be called from a real user gesture (button
  * click) the first time — browsers will reject it otherwise, which is
- * exactly the case the "Enable Sound" pill exists to handle. Returns
- * whether playback actually started.
+ * exactly the case the intro overlay / resume-hint exist to handle.
+ * Resolves true/false based on Howler's actual play/playerror events,
+ * since autoplay blocks surface asynchronously, not as thrown errors.
  */
-export function tryStartPlayback(): boolean {
+export function tryStartPlayback(): Promise<boolean> {
   const h = getHowl();
-  try {
-    if (!h.playing()) h.play();
-    return true;
-  } catch {
-    return false;
-  }
+  if (h.playing()) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const onPlay = () => { cleanup(); resolve(true); };
+    const onError = () => { cleanup(); resolve(false); };
+    function cleanup() { h.off('play', onPlay); h.off('playerror', onError); }
+    h.once('play', onPlay);
+    h.once('playerror', onError);
+    try {
+      h.play();
+    } catch {
+      cleanup();
+      resolve(false);
+    }
+  });
 }
 
 export function stopPlayback() {

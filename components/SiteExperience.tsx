@@ -10,6 +10,7 @@ import MissionProgressEffects from '@/components/MissionProgressEffects';
 import NavPanel from '@/components/NavPanel';
 import Mascot from '@/components/Mascot';
 import IntroOverlay from '@/components/IntroOverlay';
+import SoundResumeHint from '@/components/SoundResumeHint';
 import AudioDirector from '@/components/AudioDirector';
 import RealismOverlay from '@/components/RealismOverlay';
 import Finale from '@/components/Finale';
@@ -46,6 +47,7 @@ export default function SiteExperience() {
       <NavPanel />
       <Mascot />
       <IntroOverlay />
+      <SoundResumeHint />
 
       <Hero />
       <Mission1 />
