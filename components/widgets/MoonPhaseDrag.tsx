@@ -24,11 +24,12 @@ export default function MoonPhaseDrag() {
   const stageRef = useRef<HTMLDivElement>(null);
   const moonRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<Phase>(PHASES[0]);
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     const stage = stageRef.current, moon = moonRef.current;
     if (!stage || !moon) return;
-    let angle = 0, dragging = false;
+    let angle = 0, isDragging = false;
 
     function place(deg: number) {
       const rect = stage!.getBoundingClientRect();
@@ -49,9 +50,9 @@ export default function MoonPhaseDrag() {
       return deg < 0 ? deg + 360 : deg;
     }
 
-    function onDown() { dragging = true; moon!.style.cursor = 'grabbing'; }
-    function onMove(e: PointerEvent) { if (dragging) { angle = angleFromEvent(e); place(angle); } }
-    function onUp() { dragging = false; moon!.style.cursor = 'grab'; }
+    function onDown() { isDragging = true; setDragging(true); moon!.style.cursor = 'grabbing'; }
+    function onMove(e: PointerEvent) { if (isDragging) { angle = angleFromEvent(e); place(angle); } }
+    function onUp() { isDragging = false; setDragging(false); moon!.style.cursor = 'grab'; }
 
     place(angle);
     moon.addEventListener('pointerdown', onDown);
@@ -71,19 +72,26 @@ export default function MoonPhaseDrag() {
         ☀️ Sunlight is coming from the left. Watch the phase change as the Moon orbits.
       </p>
       <div ref={stageRef} style={{ position: 'relative', width: 'min(300px,78vw)', height: 'min(300px,78vw)', margin: '2rem auto 0' }}>
-        <div style={{ position: 'absolute', inset: 0, border: '1px dashed rgba(255,255,255,.18)', borderRadius: '50%' }} />
+        <div
+          style={{
+            position: 'absolute', inset: 0, borderRadius: '50%',
+            border: `1px dashed ${dragging ? 'rgba(123,92,255,.5)' : 'rgba(255,255,255,.18)'}`,
+            transition: 'border-color .3s',
+          }}
+        />
         <div
           className="planet earth"
           style={{ width: 64, height: 64, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%,-50%)' }}
         />
-        <span style={{ position: 'absolute', left: '-1.6rem', top: '50%', transform: 'translateY(-50%)', fontSize: '1.4rem' }} aria-hidden="true">☀️</span>
+        <span style={{ position: 'absolute', left: '2%', top: '50%', transform: 'translateY(-50%)', fontSize: '1.3rem', zIndex: 1 }} aria-hidden="true">☀️</span>
         <div
           ref={moonRef}
           style={{
-            position: 'absolute', width: 32, height: 32, borderRadius: '50%',
+            position: 'absolute', width: dragging ? 38 : 32, height: dragging ? 38 : 32, borderRadius: '50%',
             background: 'radial-gradient(circle at 35% 30%,#f1f1f1,#8f8f8f)',
-            boxShadow: '0 0 14px rgba(255,255,255,.35)', cursor: 'grab',
-            left: '100%', top: '50%', transform: 'translate(-50%,-50%)', touchAction: 'none',
+            boxShadow: dragging ? '0 0 26px rgba(123,92,255,.7), 0 0 10px rgba(255,255,255,.6)' : '0 0 14px rgba(255,255,255,.35)',
+            cursor: 'grab', left: '100%', top: '50%', transform: 'translate(-50%,-50%)', touchAction: 'none',
+            transition: 'width .15s ease, height .15s ease, box-shadow .2s ease',
           }}
         />
       </div>

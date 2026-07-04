@@ -64,9 +64,9 @@ export default function WarpGrid() {
       return { x: (cx / rect.width) * W, y: (cy / rect.height) * H };
     }
 
-    function onDown() { dragging = true; ball!.style.cursor = 'grabbing'; }
+    function onDown() { dragging = true; ball!.style.cursor = 'grabbing'; ball!.setAttribute('r', '19'); ball!.style.filter = 'drop-shadow(0 0 14px rgba(123,92,255,.9))'; }
     function onMove(e: PointerEvent) { if (dragging) { const p = pt(e); setBall(p.x, p.y); } }
-    function onUp() { dragging = false; ball!.style.cursor = 'grab'; }
+    function onUp() { dragging = false; ball!.style.cursor = 'grab'; ball!.setAttribute('r', '16'); ball!.style.filter = ''; }
 
     build();
     ball.addEventListener('pointerdown', onDown);
@@ -93,7 +93,7 @@ export default function WarpGrid() {
   return (
     <svg ref={svgRef} viewBox="0 0 300 220" className="w-full grid-warp" style={{ touchAction: 'none' }}>
       <g ref={gRef} stroke="rgba(123,92,255,.5)" fill="none" strokeWidth={1} />
-      <circle ref={ballRef} cx={150} cy={60} r={16} fill="url(#warp-bg)" style={{ cursor: 'grab' }} />
+      <circle ref={ballRef} cx={150} cy={60} r={16} fill="url(#warp-bg)" style={{ cursor: 'grab', transition: 'r .15s ease, filter .2s ease' }} />
       <defs>
         <radialGradient id="warp-bg" cx="35%" cy="30%">
           <stop offset="0%" stopColor="#111" />

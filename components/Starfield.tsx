@@ -28,12 +28,12 @@ export default function Starfield() {
       h = canvas!.height = window.innerHeight * dpr;
       canvas!.style.width = window.innerWidth + 'px';
       canvas!.style.height = window.innerHeight + 'px';
-      const count = Math.min(220, Math.floor((window.innerWidth * window.innerHeight) / 7000));
+      const count = Math.min(260, Math.floor((window.innerWidth * window.innerHeight) / 6000));
       stars = Array.from({ length: count }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
         z: Math.random() * 0.9 + 0.1,
-        r: (Math.random() * 1.3 + 0.3) * dpr,
+        r: (Math.random() * 1.8 + 0.4) * dpr,
         tw: Math.random() * Math.PI * 2,
         hue: Math.random() < 0.15 ? 265 : Math.random() < 0.3 ? 200 : 0,
       }));
@@ -42,7 +42,10 @@ export default function Starfield() {
     function draw(t: number) {
       ctx!.clearRect(0, 0, w, h);
       for (const s of stars) {
-        const tw = reduce ? 0.8 : 0.5 + 0.5 * Math.sin(t * 0.001 + s.tw);
+        // wider swing (0.1–1.0) and a per-star speed variance so twinkling
+        // reads as lively rather than a barely-visible flicker
+        const speed = 0.0006 + (s.z % 0.5) * 0.0012;
+        const tw = reduce ? 0.8 : 0.1 + 0.9 * (0.5 + 0.5 * Math.sin(t * speed + s.tw));
         const px = s.x + mx * s.z * 26 * dpr;
         let py = s.y + my * s.z * 26 * dpr - scrollY * s.z * 0.06 * dpr;
         py = ((py % h) + h) % h;

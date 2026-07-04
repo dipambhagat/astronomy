@@ -32,6 +32,8 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -39,6 +41,7 @@ body {
   color: var(--soft-white);
   font-family: var(--font-body);
   overflow-x: hidden;
+  max-width: 100%;
   -webkit-font-smoothing: antialiased;
 }
 

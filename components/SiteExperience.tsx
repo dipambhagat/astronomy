@@ -2,6 +2,7 @@
 
 import Hero from '@/components/Hero';
 import Starfield from '@/components/Starfield';
+import ShootingStars from '@/components/ShootingStars';
 import Twinkle from '@/components/Twinkle';
 import ConfettiCanvas from '@/components/ConfettiCanvas';
 import ProgressBar from '@/components/ProgressBar';
@@ -32,6 +33,7 @@ export default function SiteExperience() {
       <div className="sky-fixed" />
       <div className="nebula-layer" />
       <Starfield />
+      <ShootingStars />
       <Twinkle />
       <ConfettiCanvas />
 
