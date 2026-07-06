@@ -1,9 +1,7 @@
 'use client';
 
 import Hero from '@/components/Hero';
-import Starfield from '@/components/Starfield';
-import ShootingStars from '@/components/ShootingStars';
-import Twinkle from '@/components/Twinkle';
+import UniverseScene from '@/components/three/UniverseScene';
 import ConfettiCanvas from '@/components/ConfettiCanvas';
 import ProgressBar from '@/components/ProgressBar';
 import MissionProgressEffects from '@/components/MissionProgressEffects';
@@ -36,9 +34,7 @@ export default function SiteExperience() {
       <div className="sky-fixed" />
       <div className="nebula-layer" />
       <RealismOverlay />
-      <Starfield />
-      <ShootingStars />
-      <Twinkle />
+      <UniverseScene />
       <ConfettiCanvas />
 
       <ProgressBar />
